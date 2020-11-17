@@ -2,19 +2,25 @@ package com.hauntedchest.lovecraftplus.entities;
 
 import com.hauntedchest.lovecraftplus.registries.EntityTypeHandler;
 import com.hauntedchest.lovecraftplus.registries.ItemHandler;
-import net.minecraft.entity.*;
+import net.minecraft.entity.AgeableEntity;
+import net.minecraft.entity.EntitySize;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.Pose;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Lazy;
 
 import javax.annotation.Nullable;
 
 @SuppressWarnings("NullableProblems")
-public class MoonFrogEntity extends TameableEntity{
+public class MoonFrogEntity extends TameableEntity {
     private static final Lazy<Ingredient> BREEDING_ITEM = Lazy.of(() ->
             Ingredient.fromItems(ItemHandler.MOON_SAPLING_ITEM.get()));
 
@@ -34,17 +40,10 @@ public class MoonFrogEntity extends TameableEntity{
         this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
     }
 
-    protected void registerAttributes() {
-        super.registerAttributes();
-        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(10.0D);
-        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.2F);
-    }
-
-
-    @Nullable
-    @Override
-    public AgeableEntity createChild(AgeableEntity ageable) {
-        return EntityTypeHandler.MOON_FROG.get().create(this.world);
+    public static AttributeModifierMap.MutableAttribute setCustomAttributes() {
+        return func_233666_p_()
+                .createMutableAttribute(Attributes.MAX_HEALTH, 10.0D)
+                .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.2F);
     }
 
     @Override
@@ -65,5 +64,11 @@ public class MoonFrogEntity extends TameableEntity{
     @Override
     protected void setupTamedAI() {
         this.goalSelector.addGoal(2, new FollowOwnerGoal(this, 0.5f, 10f, 5f, false));
+    }
+
+    @Nullable
+    @Override
+    public AgeableEntity func_241840_a(ServerWorld world, AgeableEntity ageable) {
+        return EntityTypeHandler.MOON_FROG.get().create(this.world);
     }
 }

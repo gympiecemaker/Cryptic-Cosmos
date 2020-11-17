@@ -6,6 +6,7 @@ import com.hauntedchest.lovecraftplus.world.feature.MoonTree;
 import com.hauntedchest.lovecraftplus.world.feature.ThornTree;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialColor;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
@@ -20,7 +21,12 @@ public class BlockHandler {
             BLOCKS.register("humming_stone", HummingStone::new);
 
     public static final RegistryObject<Block> HUMMING_OBSIDIAN =
-            BLOCKS.register("humming_obsidian", HummingObsidian::new);
+            BLOCKS.register("humming_obsidian", () ->
+                    new Block(Properties.create(Material.ROCK)
+                            .hardnessAndResistance(50.0F, 1200.0F)
+                            .sound(SoundType.STONE)
+                            .harvestLevel(3)
+                            .harvestTool(ToolType.PICKAXE)));
 
     // Mooncalite
     public static final RegistryObject<Block> MOONCALITE =
@@ -91,10 +97,16 @@ public class BlockHandler {
 
     //Thorn Wood
     public static final RegistryObject<Block> THORN_LOG =
-            BLOCKS.register("thorn_log", LogBlocks::new);
+            BLOCKS.register("thorn_log", () ->
+                    Blocks.createLogBlock(MaterialColor.WOOD, MaterialColor.WOOD));
 
     public static final RegistryObject<Block> THORN_PLANKS =
-            BLOCKS.register("thorn_planks", LogBlocks::new);
+            BLOCKS.register("thorn_planks", () ->
+                    new Block(Properties.create(Material.WOOD)
+                            .hardnessAndResistance(1.0F, 1.0F)
+                            .sound(SoundType.WOOD)
+                            .harvestLevel(0)
+                            .harvestTool(ToolType.AXE)));
 
     public static final RegistryObject<Block> THORN_SLAB =
             BLOCKS.register("thorn_slab",
@@ -112,7 +124,7 @@ public class BlockHandler {
                             .notSolid()));
     public static final RegistryObject<Block> THORN_DOOR =
             BLOCKS.register("thorn_door",
-                    () -> new ThornDoor(Properties.from(Blocks.JUNGLE_DOOR)));
+                    () -> new DoorBlock(Properties.from(Blocks.JUNGLE_DOOR)));
 
     //Moon Wood
     public static final RegistryObject<Block> MOON_LOG = BLOCKS.register("moon_log", MoonLog::new);

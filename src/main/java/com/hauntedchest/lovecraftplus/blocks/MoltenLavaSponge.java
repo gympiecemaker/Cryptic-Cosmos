@@ -3,8 +3,8 @@ package com.hauntedchest.lovecraftplus.blocks;
 import com.google.common.collect.Lists;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.fluid.IFluidState;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tileentity.TileEntity;
@@ -32,7 +32,7 @@ public class MoltenLavaSponge extends Block {
     @SuppressWarnings("deprecation")
     @OnlyIn(Dist.CLIENT)
     public void animateTick(BlockState stateIn, World worldIn, BlockPos pos, Random rand) {
-        Direction direction = Direction.random(rand);
+        Direction direction = Direction.getRandomDirection(rand);
         if (direction != Direction.UP) {
             BlockPos blockpos = pos.offset(direction);
             BlockState blockstate = worldIn.getBlockState(blockpos);
@@ -103,7 +103,7 @@ public class MoltenLavaSponge extends Block {
             for(Direction direction : Direction.values()) {
                 BlockPos blockpos1 = blockpos.offset(direction);
                 BlockState blockstate = worldIn.getBlockState(blockpos1);
-                IFluidState ifluidstate = worldIn.getFluidState(blockpos1);
+                FluidState ifluidstate = worldIn.getFluidState(blockpos1);
                 Material material = blockstate.getMaterial();
                 if (ifluidstate.isTagged(FluidTags.WATER)) {
                     if (blockstate.getBlock() instanceof IBucketPickupHandler && ((IBucketPickupHandler)blockstate.getBlock()).pickupFluid(worldIn, blockpos1, blockstate) != Fluids.EMPTY) {

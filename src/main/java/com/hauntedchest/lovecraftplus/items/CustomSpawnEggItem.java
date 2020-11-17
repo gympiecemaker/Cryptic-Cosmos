@@ -11,7 +11,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.common.util.NonNullSupplier;
-import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 import javax.annotation.Nullable;
@@ -29,17 +28,9 @@ public class CustomSpawnEggItem extends SpawnEggItem {
                               int primaryColorIn,
                               int secondaryColorIn,
                               Properties builder) {
+        //noinspection ConstantConditions
         super(null, primaryColorIn, secondaryColorIn, builder);
         this.entityTypeSupplier = Lazy.of(entityTypeSupplier::get);
-        UNADDED_EGGS.add(this);
-    }
-
-    public CustomSpawnEggItem(final RegistryObject<? extends EntityType<?>> entityTypeSupplier,
-                              int primaryColorIn,
-                              int secondaryColorIn,
-                              Properties builder) {
-        super(null, primaryColorIn, secondaryColorIn, builder);
-        this.entityTypeSupplier = Lazy.of(entityTypeSupplier);
         UNADDED_EGGS.add(this);
     }
 

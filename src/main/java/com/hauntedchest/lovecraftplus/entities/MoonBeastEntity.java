@@ -1,7 +1,8 @@
 package com.hauntedchest.lovecraftplus.entities;
 
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.monster.EndermanEntity;
 import net.minecraft.entity.monster.MonsterEntity;
@@ -32,13 +33,12 @@ public class MoonBeastEntity extends MonsterEntity {
         this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, EndermanEntity.class, true));
     }
 
-    @Override
-    protected void registerAttributes() {
-        super.registerAttributes();
-        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(50.0D);
-        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.5D);
-        this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(6.0D);
-        this.getAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(4D);
+    public static AttributeModifierMap.MutableAttribute setCustomAttributes() {
+        return func_234295_eP_()
+                .createMutableAttribute(Attributes.MAX_HEALTH, 50f)
+                .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.5f)
+                .createMutableAttribute(Attributes.ATTACK_DAMAGE, 6f)
+                .createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 4f);
     }
 
     protected int getExperiencePoints(@Nonnull PlayerEntity player) {

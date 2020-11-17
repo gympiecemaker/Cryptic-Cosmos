@@ -36,7 +36,27 @@
       },
       "biomes": [
         {
-          "biome": "minecraft:plains",
+          "biome": "lovecraftplus:moon_mountains",
+          "parameters": {
+            "altitude": 0,
+            "temperature": 1,
+            "humidity": -1,
+            "weirdness": 0,
+            "offset": 0
+          }
+        },
+        {
+          "biome": "lovecraftplus:moon_forest",
+          "parameters": {
+            "altitude": 0,
+            "temperature": -1,
+            "humidity": 1,
+            "weirdness": 0,
+            "offset": 0
+          }
+        },
+        {
+          "biome": "lovecraftplus:moon_plains",
           "parameters": {
             "altitude": 0,
             "temperature": 0,

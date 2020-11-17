@@ -2,22 +2,24 @@ package com.hauntedchest.lovecraftplus;
 
 import com.hauntedchest.lovecraftplus.client.entity.model.render.MoonBeastRender;
 import com.hauntedchest.lovecraftplus.client.entity.model.render.MoonFrogRender;
+import com.hauntedchest.lovecraftplus.entities.MoonBeastEntity;
+import com.hauntedchest.lovecraftplus.entities.MoonFrogEntity;
 import com.hauntedchest.lovecraftplus.items.CustomSpawnEggItem;
 import com.hauntedchest.lovecraftplus.registries.*;
-import com.hauntedchest.lovecraftplus.world.gen.StructureGen;
+import com.hauntedchest.lovecraftplus.world.FeatureGen;
+import com.hauntedchest.lovecraftplus.world.StructureGen;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.feature.Feature;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.world.BiomeLoadingEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -25,9 +27,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import static net.minecraft.world.biome.Biome.SpawnListEntry;
-
 
 @Mod(LovecraftPlusMod.MOD_ID)
 public class LovecraftPlusMod {
@@ -62,38 +61,24 @@ public class LovecraftPlusMod {
         EntityTypeHandler.ENTITY_TYPES.register(modEventBus);
         BiomeHandler.BIOMES.register(modEventBus);
         MoonBiomeHandler.BIOMES.register(modEventBus);
-        DimensionHandler.MOD_DIMENSIONS.register(modEventBus);
         FeatureHandler.FEATURE.register(modEventBus);
 
         modEventBus.addListener(this::setup);
         modEventBus.addListener(this::doClientStuff);
-        modEventBus.addGenericListener(Biome.class, this::onRegisterBiomes);
-        modEventBus.addGenericListener(Feature.class, FeatureHandler::registerStructurePieces);
+        // modEventBus.addGenericListener(Structure.class, FeatureHandler::registerStructurePieces);
         modEventBus.addGenericListener(EntityType.class, this::onRegisterEntities);
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::biomeLoading);
     }
 
-    public void onRegisterBiomes(final RegistryEvent.Register<Biome> event) {
-        BiomeHandler.registerBiomes();
-        MoonBiomeHandler.registerBiomes();
-        LOGGER.debug("registered biomes!");
-    }
-
-    @SuppressWarnings("deprecation")
     private void setup(final FMLCommonSetupEvent event) {
-        DeferredWorkQueue.runLater(() -> {
-            StructureGen.generateStructures();
+        event.enqueueWork(() -> {
+            GlobalEntityTypeAttributes.put(
+                    EntityTypeHandler.MOON_FROG.get(),
+                    MoonFrogEntity.setCustomAttributes().create());
 
-            MoonBiomeHandler.MOON_MOUNTAINS.get().addSpawn(EntityClassification.MONSTER, new SpawnListEntry(
-                    EntityTypeHandler.MOON_BEAST.get(), 8, 1, 2));
-
-            MoonBiomeHandler.MOON_MOUNTAINS.get().addSpawn(EntityClassification.MONSTER, new SpawnListEntry(
-                    EntityType.ENDERMAN, 4, 1, 4));
-
-            MoonBiomeHandler.MOON_PLAINS.get().addSpawn(EntityClassification.MONSTER, new Biome.SpawnListEntry(
-                    EntityType.ENDERMAN, 4, 1, 4));
-
-            MoonBiomeHandler.MOON_PLAINS.get().addSpawn(EntityClassification.CREATURE, new SpawnListEntry(
-                    EntityTypeHandler.MOON_BEAST.get(), 8, 1, 2));
+            GlobalEntityTypeAttributes.put(
+                    EntityTypeHandler.MOON_BEAST.get(),
+                    MoonBeastEntity.setCustomAttributes().create());
         });
     }
 
@@ -114,5 +99,12 @@ public class LovecraftPlusMod {
 
     private void onRegisterEntities(RegistryEvent.Register<EntityType<?>> event) {
         CustomSpawnEggItem.initSpawnEggs();
+    }
+
+    public void biomeLoading(BiomeLoadingEvent event) {
+        MoonBiomeHandler.biomeLoading(event);
+        BiomeHandler.biomeLoading(event);
+        FeatureGen.addFeaturesToBiomes(event);
+        StructureGen.generateStructures(event);
     }
 }

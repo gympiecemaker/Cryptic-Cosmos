@@ -87,14 +87,6 @@ minecraft {
 }
 
 repositories {
-    maven { url 'https://repo.repsy.io/mvn/gandiber/geckolib' }
-}
-
-dependencies {
-    implementation fg.deobf("software.bernie.geckolib:forge-1.15.2-geckolib:${geckolib_version}")
-}
-
-repositories {
     maven {
         // location of the maven that hosts JEI files
         name = "Progwml6 maven"

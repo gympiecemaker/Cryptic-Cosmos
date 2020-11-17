@@ -1,7 +1,6 @@
 package com.hauntedchest.lovecraftplus.datagen;
 
 import com.hauntedchest.lovecraftplus.LovecraftPlusMod;
-import com.hauntedchest.lovecraftplus.registries.BiomeHandler;
 import com.hauntedchest.lovecraftplus.registries.BlockHandler;
 import com.hauntedchest.lovecraftplus.registries.EntityTypeHandler;
 import com.hauntedchest.lovecraftplus.registries.ItemHandler;
@@ -72,7 +71,7 @@ public abstract class Lang extends LanguageProvider {
             add(EntityTypeHandler.MOON_FROG.get(), "Moon Frog");
 
             // Biomes
-            add(BiomeHandler.THORN_JUNGLE.get(), "Thorn Jungle");
+            add("biome.lovecraftplus.thorn_jungle", "Thorn Jungle");
         }
     }
 }

@@ -13,8 +13,10 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MutableBoundingBox;
-import net.minecraft.world.IWorld;
+import net.minecraft.world.ISeedReader;
+import net.minecraft.world.IServerWorld;
 import net.minecraft.world.gen.ChunkGenerator;
+import net.minecraft.world.gen.feature.structure.StructureManager;
 import net.minecraft.world.gen.feature.structure.StructurePiece;
 import net.minecraft.world.gen.feature.structure.TemplateStructurePiece;
 import net.minecraft.world.gen.feature.template.PlacementSettings;
@@ -40,6 +42,7 @@ public class MoonPillarPieces {
         pieces.add(new MoonPillarPieces.Piece(manager, PART_1, blockpos, rot));
     }
 
+    @SuppressWarnings("NullableProblems")
     public static class Piece extends TemplateStructurePiece {
         private final ResourceLocation resourceLocation;
         private final Rotation rotation;
@@ -76,11 +79,7 @@ public class MoonPillarPieces {
         }
 
         @Override
-        protected void handleDataMarker(@Nonnull String function,
-                                        @Nonnull BlockPos pos,
-                                        @Nonnull IWorld worldIn,
-                                        @Nonnull Random rand,
-                                        @Nonnull MutableBoundingBox sbb) {
+        protected void handleDataMarker(String function, BlockPos pos, IServerWorld worldIn, Random rand, MutableBoundingBox sbb) {
             if ("chest".equals(function)) {
                 worldIn.setBlockState(pos, Blocks.CHEST.getDefaultState(), 2);
                 TileEntity tileentity = worldIn.getTileEntity(pos);
@@ -90,17 +89,27 @@ public class MoonPillarPieces {
             }
         }
 
-        // create
         @Override
-        public boolean create(@Nonnull IWorld worldIn, @Nonnull ChunkGenerator<?> generator, @Nonnull Random randomIn,
-                              @Nonnull MutableBoundingBox structureBoundingBoxIn, @Nonnull ChunkPos chunkPos) {
+        public boolean func_230383_a_(ISeedReader seedReader,
+                                      StructureManager structureManager,
+                                      ChunkGenerator chunkGenerator,
+                                      Random random,
+                                      MutableBoundingBox boundingBox,
+                                      ChunkPos chunkPos,
+                                      BlockPos pos) {
             PlacementSettings placementsettings = (new PlacementSettings()).setRotation(this.rotation)
                     .setMirror(Mirror.NONE);
             BlockPos blockpos = MoonPillarPieces.OFFSET.get(this.resourceLocation);
             this.templatePosition.add(Template.transformedBlockPos(placementsettings,
                     new BlockPos(-blockpos.getX(), 0, -blockpos.getZ())));
 
-            return super.create(worldIn, generator, randomIn, structureBoundingBoxIn, chunkPos);
+            return super.func_230383_a_(seedReader,
+                    structureManager,
+                    chunkGenerator,
+                    random,
+                    boundingBox,
+                    chunkPos,
+                    pos);
         }
     }
 }

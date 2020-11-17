@@ -8,6 +8,7 @@ import net.minecraft.block.trees.Tree;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
@@ -16,6 +17,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.ForgeEventFactory;
 
+import javax.annotation.Nullable;
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -49,15 +51,10 @@ public class ThornSapling extends BushBlock implements IGrowable {
         }
     }
 
-    public void grow(ServerWorld serverWorld, BlockPos pos, BlockState state, Random rand) {
-        if (state.get(STAGE) == 0) {
-            serverWorld.setBlockState(pos, state.cycle(STAGE), 4);
-        } else {
-            if (!ForgeEventFactory.saplingGrowTree(serverWorld, rand, pos))
-                return;
-            this.tree.get().place(serverWorld, serverWorld.getChunkProvider().getChunkGenerator(), pos, state,
-                    rand);
-        }
+    private static BlockState cycleGrowthStage(BlockState state) {
+        return state.with(MoonSapling.STAGE,
+                getAdjacentValue(MoonSapling.STAGE.getAllowedValues(),
+                        state.get(MoonSapling.STAGE)));
     }
 
     @Override
@@ -78,5 +75,20 @@ public class ThornSapling extends BushBlock implements IGrowable {
     @Override
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(STAGE);
+    }
+
+    private static <T> T getAdjacentValue(Iterable<T> allowedValues, @Nullable T currentValue) {
+        return Util.getElementAfter(allowedValues, currentValue);
+    }
+
+    public void grow(ServerWorld serverWorld, BlockPos pos, BlockState state, Random rand) {
+        if (state.get(STAGE) == 0) {
+            serverWorld.setBlockState(pos, cycleGrowthStage(state), 4);
+        } else {
+            if (!ForgeEventFactory.saplingGrowTree(serverWorld, rand, pos))
+                return;
+            this.tree.get().attemptGrowTree(serverWorld, serverWorld.getChunkProvider().getChunkGenerator(), pos, state,
+                    rand);
+        }
     }
 }

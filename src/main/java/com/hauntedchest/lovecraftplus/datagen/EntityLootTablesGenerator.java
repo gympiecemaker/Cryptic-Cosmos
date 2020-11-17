@@ -10,9 +10,9 @@ import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.IDataProvider;
 import net.minecraft.data.LootTableProvider;
 import net.minecraft.entity.EntityType;
+import net.minecraft.loot.*;
+import net.minecraft.loot.conditions.RandomChanceWithLooting;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.storage.loot.*;
-import net.minecraft.world.storage.loot.conditions.RandomChanceWithLooting;
 
 import java.io.IOException;
 import java.nio.file.Path;
